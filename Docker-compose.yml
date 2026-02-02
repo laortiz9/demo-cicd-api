@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api:
+    image: ghcr.io/laortiz9/demo-cicd-api:latest
+    container_name: demo-cicd-api
+    ports:
+      - "8080:8080"
+      - "8443:8443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - GIT_SHA=${GIT_SHA:-local}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+    networks:
+      - demo-network
+
+networks:
+  demo-network:
+    driver: bridge
